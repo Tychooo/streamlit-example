@@ -43,62 +43,37 @@ st.altair_chart(alt.Chart(df, height=700, width=700)
 
 import streamlit as st
 
-# TradingView Widget HTML code
-tradingview_html = """
-<div class="tradingview-widget-container" style="height:500px;width:100%">
-  <div class="tradingview-widget-container__widget" style="height:calc(100% - 32px);width:100%"></div>
-  <div class="tradingview-widget-copyright"><a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank"><span class="blue-text">Track all markets on TradingView</span></a></div>
-  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
-  {
-  "autosize": true,
-  "symbol": "NASDAQ:AAPL",
-  "interval": "D",
-  "timezone": "Etc/UTC",
-  "theme": "light",
-  "style": "1",
-  "locale": "en",
-  "enable_publishing": false,
-  "allow_symbol_change": true,
-  "support_host": "https://www.tradingview.com"
-}
-  </script>
-</div>
-"""
-
-# Streamlit app
-st.title("Streamlit TradingView Widget")
-
-# Display the TradingView widget using st.markdown
-st.markdown(tradingview_html, unsafe_allow_html=True)
-
-# Add a button to open the TradingView chart in a new tab
-if st.button("Open Chart in New Tab"):
-    st.markdown(
-        """
-        <a href="https://www.tradingview.com/chart/?symbol=NASDAQ:AAPL" target="_blank">Open Chart</a>
-        """,
-        unsafe_allow_html=True
-    )
-
-pip install yfinance
 
 import streamlit as st
-import yfinance as yf
+import requests
 
-# Function to fetch market data
-def get_market_data(symbol, period="1d", interval="1m"):
-    stock_data = yf.download(symbol, period=period, interval=interval)
-    return stock_data
+# Replace 'YOUR_API_KEY' with your actual Polygon.io API key
+POLYGON_API_KEY = 'AKXcSW9xH226RmorFjVWRwlLyJAMseot'
 
-# Streamlit app
-st.title("Market Data Table")
+# Streamlit app title
+st.title("Polygon.io Data Dashboard")
 
-# S&P 500 Index
-st.header("S&P 500 Index (SPY)")
-spy_data = get_market_data("^GSPC")
-st.write(spy_data.tail())  # Display the last few rows of data in the table
+# Function to fetch data from Polygon.io API
+def get_polygon_data(symbol, date):
+    base_url = f"https://api.polygon.io/v2/aggs/ticker/{symbol}/range/1/day/{date}/{date}"
+    params = {"apiKey": POLYGON_API_KEY}
+    response = requests.get(base_url, params=params)
 
-# S&P 500 E-Mini Futures
-st.header("S&P 500 E-Mini Futures (ES=F)")
-es_data = get_market_data("ES=F")
-st.write(es_data.tail())  # Display the last few rows of data in the table
+    if response.status_code == 200:
+        data = response.json()
+        return data
+    else:
+        st.error(f"Error fetching data: {response.text}")
+        return None
+
+# Sidebar for user input
+symbol = st.sidebar.text_input("Enter Stock Symbol (e.g., AAPL):", "AAPL")
+date = st.sidebar.text_input("Enter Date (YYYY-MM-DD):", "2022-01-01")
+
+# Fetch and display data
+if st.sidebar.button("Fetch Data"):
+    st.subheader(f"Polygon.io Data for {symbol} on {date}")
+    data = get_polygon_data(symbol, date)
+
+    if data:
+        st.write(data)
