@@ -42,9 +42,6 @@ st.altair_chart(alt.Chart(df, height=700, width=700)
 
 
 import streamlit as st
-
-
-import streamlit as st
 import requests
 
 # Replace 'YOUR_API_KEY' with your actual Polygon.io API key
@@ -57,7 +54,8 @@ st.title("Polygon.io Data Dashboard")
 def get_polygon_data(symbol, date):
     base_url = f"https://api.polygon.io/v2/aggs/ticker/{symbol}/range/1/day/{date}/{date}"
     params = {"apiKey": POLYGON_API_KEY}
-    response = requests.get(base_url, params=params)
+    headers = {"Content-Type": "application/json"}
+    response = requests.get(base_url, params=params, headers=headers)
 
     if response.status_code == 200:
         data = response.json()
@@ -75,5 +73,8 @@ if st.sidebar.button("Fetch Data"):
     st.subheader(f"Polygon.io Data for {symbol} on {date}")
     data = get_polygon_data(symbol, date)
 
-    if data:
-        st.write(data)
+    if data and data.get("status") == "OK":
+        st.write(data["results"])
+    else:
+        st.error("Error fetching data. Check your API key and input parameters.")
+
