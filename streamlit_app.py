@@ -79,3 +79,26 @@ if st.button("Open Chart in New Tab"):
         """,
         unsafe_allow_html=True
     )
+
+pip install yfinance
+
+import streamlit as st
+import yfinance as yf
+
+# Function to fetch market data
+def get_market_data(symbol, period="1d", interval="1m"):
+    stock_data = yf.download(symbol, period=period, interval=interval)
+    return stock_data
+
+# Streamlit app
+st.title("Market Data Table")
+
+# S&P 500 Index
+st.header("S&P 500 Index (SPY)")
+spy_data = get_market_data("^GSPC")
+st.write(spy_data.tail())  # Display the last few rows of data in the table
+
+# S&P 500 E-Mini Futures
+st.header("S&P 500 E-Mini Futures (ES=F)")
+es_data = get_market_data("ES=F")
+st.write(es_data.tail())  # Display the last few rows of data in the table
