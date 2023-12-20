@@ -41,7 +41,10 @@ st.altair_chart(alt.Chart(df, height=700, width=700)
 
 
 
-<!-- TradingView Widget BEGIN -->
+import streamlit as st
+
+# TradingView Widget HTML code
+tradingview_html = """
 <div class="tradingview-widget-container" style="height:100%;width:100%">
   <div class="tradingview-widget-container__widget" style="height:calc(100% - 32px);width:100%"></div>
   <div class="tradingview-widget-copyright"><a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank"><span class="blue-text">Track all markets on TradingView</span></a></div>
@@ -60,4 +63,10 @@ st.altair_chart(alt.Chart(df, height=700, width=700)
 }
   </script>
 </div>
-<!-- TradingView Widget END -->
+"""
+
+# Streamlit app
+st.title("Streamlit TradingView Widget")
+
+# Display the TradingView widget using st.markdown
+st.markdown(tradingview_html, unsafe_allow_html=True)
