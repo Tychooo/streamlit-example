@@ -80,30 +80,6 @@ if st.sidebar.button("Fetch Data"):
         st.error("Error fetching data. Check your API key and input parameters.")
 
 
-from ibapi.client import EClient
-from ibapi.wrapper import EWrapper
-
-class MyWrapper(EWrapper):
-    def __init__(self):
-        self.client = EClient(self)
-
-    def connect(self, host, port, client_id):
-        self.client.connect(host, port, client_id)
-
-    def disconnect(self):
-        self.client.disconnect()
-
-if __name__ == "__main__":
-    wrapper = MyWrapper()
-    host = "127.0.0.1"  # Replace with the IP address of your TWS or IB Gateway
-    port = 7497          # Replace with the port number used by your TWS or IB Gateway
-    client_id = 1        # Choose a unique client ID
-    
-    wrapper.connect(host, port, client_id)
-
-    # Add your code to interact with the TWS API here
-
-    wrapper.disconnect()
 
 
 
